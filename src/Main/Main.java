@@ -8,6 +8,7 @@ import controller.LoginController;
 import view.LoginFrame;
 
 import javax.swing.JFrame;
+import service.GeneradorPDF;
 
 public class Main {
 
@@ -16,6 +17,8 @@ public class Main {
         java.awt.EventQueue.invokeLater(() -> {
 
             LoginFrame loginPanel = new LoginFrame();
+            GeneradorPDF pdf = new GeneradorPDF();
+            pdf.probarPDF();
 
             new LoginController(loginPanel);
 

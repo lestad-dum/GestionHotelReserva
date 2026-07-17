@@ -18,6 +18,33 @@ public class Reserva {
     private String estado;
     private String nombreCliente;
     private String numeroHabitacion;
+    private String correoCliente;
+    private String tipoHabitacion;
+    private double precioPorNoche;
+    
+    public String getCorreoCliente() {
+    return correoCliente;
+    }
+
+    public void setCorreoCliente(String correoCliente) {
+        this.correoCliente = correoCliente;
+    }
+
+    public String getTipoHabitacion() {
+        return tipoHabitacion;
+    }
+
+    public void setTipoHabitacion(String tipoHabitacion) {
+        this.tipoHabitacion = tipoHabitacion;
+    }
+
+    public double getPrecioPorNoche() {
+        return precioPorNoche;
+    }
+
+    public void setPrecioPorNoche(double precioPorNoche) {
+        this.precioPorNoche = precioPorNoche;
+    }
 
     public String getNombreCliente() {
         return nombreCliente;
