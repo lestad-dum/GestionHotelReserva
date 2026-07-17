@@ -4,37 +4,86 @@
  */
 package service;
 
+import java.time.temporal.ChronoUnit;
 import model.Reserva;
 
 public class Boleta {
 
-    public String generarContenido(Reserva reserva) {
+    private final Reserva reserva;
 
-        String titulo;
+    public static final String EMPRESA =
+            "EMPRESA HOTELERA LUNA S.A.C.";
+
+    public static final String RUC =
+            "20601525784";
+
+    public static final String TELEFONO =
+            "952356845";
+
+    public static final String DIRECCION =
+            "Av. Larco 560, Miraflores, Lima";
+
+    public Boleta(Reserva reserva) {
+        this.reserva = reserva;
+    }
+
+    public Reserva getReserva() {
+        return reserva;
+    }
+
+    public long getCantidadNoches() {
+
+        return ChronoUnit.DAYS.between(
+                reserva.getCheckIn(),
+                reserva.getCheckOut()
+        );
+    }
+
+    public double getSubtotal() {
+
+        return getCantidadNoches()
+                * reserva.getPrecioPorNoche();
+    }
+
+    public double getPenalidad() {
+
+        if (reserva.getEstado().equalsIgnoreCase("Cancelada")) {
+
+            return getSubtotal() * 0.20;
+
+        }
+
+        return 0;
+    }
+
+    public double getTotal() {
+
+        if (reserva.getEstado().equalsIgnoreCase("Cancelada")) {
+
+            return getSubtotal() - getPenalidad();
+
+        }
+
+        return getSubtotal();
+    }
+
+    public String getTitulo() {
 
         switch (reserva.getEstado()) {
 
             case "Confirmada":
-                titulo = "CONFIRMACIÓN DE RESERVA";
-                break;
+                return "CONFIRMACIÓN DE RESERVA";
 
             case "Cancelada":
-                titulo = "CONSTANCIA DE CANCELACIÓN";
-                break;
+                return "CONSTANCIA DE CANCELACIÓN";
 
             case "Finalizada":
-                titulo = "COMPROBANTE DE ESTADÍA FINALIZADA";
-                break;
+                return "BOLETA DE HOSPEDAJE";
 
             default:
-                titulo = "DETALLE DE RESERVA";
-                break;
+                return "BOLETA";
         }
 
-        return titulo + "\n\n"
-                + "Hotel Luna Rose\n"
-                + "Reserva N.°: " + reserva.getId() + "\n"
-                + "Estado: " + reserva.getEstado() + "\n\n"
-                + "Gracias por elegir Hotel Luna Rose.";
     }
+
 }

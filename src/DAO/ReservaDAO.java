@@ -207,5 +207,93 @@ public class ReservaDAO {
         return false;
 
     }
+    
+    // Obtener todos los datos necesarios para la boleta y el correo
+public Reserva obtenerReservaCompleta(long idReserva) {
+
+    String sql = """
+            SELECT
+                r.id,
+                r.cliente_id,
+                r.habitacion_id,
+                r.fecha_registro,
+                r.check_in,
+                r.check_out,
+                r.estado,
+
+                c.nombres || ' ' || c.apellidos AS cliente,
+                c.correo AS correo_cliente,
+
+                h.numero AS habitacion,
+                h.tipo AS tipo_habitacion,
+                h.precio AS precio_por_noche
+
+            FROM reservas r
+
+            INNER JOIN clientes c
+                ON r.cliente_id = c.id
+
+            INNER JOIN habitaciones h
+                ON r.habitacion_id = h.id
+
+            WHERE r.id = ?
+            """;
+
+    try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+        ps.setLong(1, idReserva);
+
+        try (ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+
+                Reserva reserva = new Reserva();
+
+                reserva.setId(rs.getLong("id"));
+                reserva.setClienteId(rs.getLong("cliente_id"));
+                reserva.setHabitacionId(rs.getLong("habitacion_id"));
+
+                if (rs.getTimestamp("fecha_registro") != null) {
+                    reserva.setFechaRegistro(
+                            rs.getTimestamp("fecha_registro")
+                                    .toLocalDateTime()
+                    );
+                }
+
+                if (rs.getDate("check_in") != null) {
+                    reserva.setCheckIn(
+                            rs.getDate("check_in").toLocalDate()
+                    );
+                }
+
+                if (rs.getDate("check_out") != null) {
+                    reserva.setCheckOut(
+                            rs.getDate("check_out").toLocalDate()
+                    );
+                }
+
+                reserva.setEstado(rs.getString("estado"));
+                reserva.setNombreCliente(rs.getString("cliente"));
+                reserva.setCorreoCliente(rs.getString("correo_cliente"));
+                reserva.setNumeroHabitacion(rs.getString("habitacion"));
+                reserva.setTipoHabitacion(rs.getString("tipo_habitacion"));
+                reserva.setPrecioPorNoche(rs.getDouble("precio_por_noche"));
+
+                return reserva;
+            }
+
+        }
+
+    } catch (Exception e) {
+
+        System.out.println(
+                "Error al obtener los datos completos de la reserva."
+        );
+
+        e.printStackTrace();
+    }
+
+    return null;
+}
 
 }
