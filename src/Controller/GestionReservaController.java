@@ -122,9 +122,8 @@ public class GestionReservaController {
 
         if (resultado) {
 
-             Reserva reservaActualizada = new Reserva();
-            reservaActualizada.setId(idReserva);
-            reservaActualizada.setEstado(nuevoEstado);
+             Reserva reservaActualizada =
+             reservaDAO.obtenerReservaCompleta(idReserva);
 
             subjectReserva.notificarObservers(reservaActualizada);
 
