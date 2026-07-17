@@ -11,15 +11,20 @@ import javax.swing.table.DefaultTableModel;
 import model.Reserva;
 import view.GestionReserva;
 import view.Registros;
+import service.EmailNotifier;
+import service.SubjectReserva;
 
 public class GestionReservaController {
 
     private final GestionReserva vista;
     private final ReservaDAO reservaDAO;
-
+    private final SubjectReserva subjectReserva;
+    
     public GestionReservaController(GestionReserva vista) {
         this.vista = vista;
         this.reservaDAO = new ReservaDAO();
+        this.subjectReserva = new SubjectReserva();
+        this.subjectReserva.agregarObserver(new EmailNotifier());
 
         iniciarEventos();
         cargarReservas();
@@ -117,14 +122,20 @@ public class GestionReservaController {
 
         if (resultado) {
 
+             Reserva reservaActualizada = new Reserva();
+            reservaActualizada.setId(idReserva);
+            reservaActualizada.setEstado(nuevoEstado);
+
+            subjectReserva.notificarObservers(reservaActualizada);
+
             JOptionPane.showMessageDialog(
-                    vista,
-                    "Reserva actualizada a: " + nuevoEstado
-            );
+            vista,
+            "Reserva actualizada a: " + nuevoEstado
+             );
 
-            cargarReservas();
+    cargarReservas();
 
-        } else {
+} else {
 
             JOptionPane.showMessageDialog(
                     vista,
