@@ -70,11 +70,22 @@ public class EmailService {
                     )
             );
 
-            // Por ahora se envía al mismo correo para realizar la prueba.
-            mensaje.setRecipient(
-                    Message.RecipientType.TO,
-                    new InternetAddress(correoEmisor)
-            );
+          if (reserva.getCorreoCliente() == null
+        || reserva.getCorreoCliente().isBlank()) {
+
+    System.err.println(
+            "La reserva no tiene un correo de cliente asociado."
+    );
+
+    return;
+}
+
+mensaje.setRecipient(
+        Message.RecipientType.TO,
+        new InternetAddress(
+                reserva.getCorreoCliente().trim()
+        )
+);
 
             mensaje.setSubject(
                     "Actualización de reserva - Hotel Luna Rose",
@@ -93,9 +104,9 @@ public class EmailService {
             Transport.send(mensaje);
 
             System.out.println(
-                    "Correo real enviado correctamente a: "
-                    + correoEmisor
-            );
+        "Correo enviado correctamente a: "
+        + reserva.getCorreoCliente()
+);
 
         } catch (Exception ex) {
             System.err.println(

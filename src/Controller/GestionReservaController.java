@@ -5,13 +5,17 @@
 package controller;
 
 import dao.ReservaDAO;
+import java.io.File;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Reserva;
+import service.Boleta;
+import service.BoletaPDFDecorator;
 import view.GestionReserva;
 import view.Registros;
 import service.EmailNotifier;
+import service.GeneradorPDF;
 import service.SubjectReserva;
 
 public class GestionReservaController {
@@ -120,20 +124,40 @@ public class GestionReservaController {
                 break;
         }
 
-        if (resultado) {
+       if (resultado) {
 
-             Reserva reservaActualizada =
-             reservaDAO.obtenerReservaCompleta(idReserva);
+    Reserva reservaActualizada =
+            reservaDAO.obtenerReservaCompleta(idReserva);
 
-            subjectReserva.notificarObservers(reservaActualizada);
+    if (reservaActualizada != null) {
 
-            JOptionPane.showMessageDialog(
+        subjectReserva.notificarObservers(
+                reservaActualizada
+        );
+
+        Boleta boleta = new Boleta(
+                reservaActualizada
+        );
+
+        BoletaPDFDecorator boletaPDF =
+                new BoletaPDFDecorator(boleta);
+
+        File archivoPDF =
+                boletaPDF.generarPDF();
+
+        if (archivoPDF != null) {
+            new GeneradorPDF().abrirPDF(
+                    archivoPDF
+            );
+        }
+    }
+
+    JOptionPane.showMessageDialog(
             vista,
             "Reserva actualizada a: " + nuevoEstado
-             );
+    );
 
     cargarReservas();
-
 } else {
 
             JOptionPane.showMessageDialog(
